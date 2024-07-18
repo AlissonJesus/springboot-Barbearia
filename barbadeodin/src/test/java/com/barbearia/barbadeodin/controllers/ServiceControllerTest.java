@@ -2,11 +2,13 @@ package com.barbearia.barbadeodin.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.DisplayName;
@@ -65,43 +67,67 @@ class ServiceControllerTest {
 			payload.price(), 
 			payload.duration());
 	
+	private String methodArgumentNotValidMessage = "Dados inválidos fornecidos";
+	
 	@Test
 	@DisplayName("Should register successfully and return status 200")
 	void shouldRegisterServiceSuccessfully() throws Exception {
 		var requestBody = prepareSimulationScenarioForRegistration();
 		var response = executeRegistrationSimulation(requestBody);
-		verifyExpectedResponse(response);
+		verifyExpectedResponse(response, HttpStatus.CREATED);
 		verifyMockBehavior();
 	}
 	
 	@Test
 	@DisplayName("Should fail to register with invalid request body and return status 400")
 	void shouldFailToRegisterWithInvalidRequestBody() throws Exception {
-		
-		var response = executeInvalidRegistrationSimulation();
+		var response = executeRegistrationSimulation("{}");
 		verifyErrorResponse(response);
-		
+	}
+	
+	@Test
+	void shouldGetService() throws Exception {
+		prepareSimulationScenarioForGetById();
+		var response = executeGetByIdScenarioSimulation();
+		verifyExpectedResponse(response, HttpStatus.OK);
+		verifyMockBehaviorGetById();
+	}
+	
+	
+	
+
+	private void prepareSimulationScenarioForGetById() {
+		when(service.getById(any(Long.class))).thenReturn(serviceDetalhado);
 	}
 
-	private void verifyErrorResponse(MockHttpServletResponse response) {
-		verifyStatus(response.getStatus(), HttpStatus.BAD_REQUEST);
-	}
-
-	private MockHttpServletResponse executeInvalidRegistrationSimulation() throws Exception {
-		return mvc.perform(post("/services")
+	private MockHttpServletResponse executeGetByIdScenarioSimulation() throws Exception {
+		return mvc.perform(post("/services/{id}", 1L)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content("{}")
 				.characterEncoding("UTF-8"))
 				.andReturn().getResponse();
+	}
+
+	private void verifyErrorResponse(MockHttpServletResponse response) throws Exception {
+		verifyStatus(response.getStatus(), HttpStatus.BAD_REQUEST);
+		verifyMessage(response);
+	}
+
+
+	private void verifyMessage(MockHttpServletResponse response) throws UnsupportedEncodingException {
+		var body = response.getContentAsString(StandardCharsets.UTF_8);
+		assertThat(body).isEqualTo(methodArgumentNotValidMessage);
 	}
 
 	private void verifyMockBehavior() {
 		verify(service, times(1)).register(payload);	
 	}
+	
+	private void verifyMockBehaviorGetById() {
+		verify(service, times(1)).getById(any(Long.class));	
+	}
 
-	private void verifyExpectedResponse(MockHttpServletResponse response) throws Exception {
-		
-		verifyStatus(response.getStatus(), HttpStatus.CREATED);
+	private void verifyExpectedResponse(MockHttpServletResponse response, HttpStatus status) throws Exception {
+		verifyStatus(response.getStatus(), status);
 		var body = response.getContentAsString(StandardCharsets.UTF_8);
 		verifyBody(body);
 	}

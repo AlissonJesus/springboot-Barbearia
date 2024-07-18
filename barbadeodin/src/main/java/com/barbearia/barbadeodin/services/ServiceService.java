@@ -13,4 +13,9 @@ public class ServiceService {
 		return null;
 	}
 
+	public ServiceDetailsDto getById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
