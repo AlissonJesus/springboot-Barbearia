@@ -8,7 +8,7 @@ import com.barbearia.barbadeodin.models.ServiceDto;
 @Service
 public class ServiceService {
 
-	public ServiceDetailsDto cadastra(ServiceDto payload) {
+	public ServiceDetailsDto register(ServiceDto payload) {
 		// TODO Auto-generated method stub
 		return null;
 	}

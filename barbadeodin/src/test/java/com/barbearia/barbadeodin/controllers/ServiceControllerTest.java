@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -65,22 +66,43 @@ class ServiceControllerTest {
 			payload.duration());
 	
 	@Test
-	void deveCadastrarComSucessoRetornaStatus200() throws Exception {
-		preparaCenarioSimulacaoCadastra();
-		var response = executaSimulacaoCadastra();
-		verificaRespostaEsperada(response);
-		verificaComportamentoMock();
+	@DisplayName("Should register successfully and return status 200")
+	void shouldRegisterServiceSuccessfully() throws Exception {
+		var requestBody = prepareSimulationScenarioForRegistration();
+		var response = executeRegistrationSimulation(requestBody);
+		verifyExpectedResponse(response);
+		verifyMockBehavior();
+	}
+	
+	@Test
+	@DisplayName("Should fail to register with invalid request body and return status 400")
+	void shouldFailToRegisterWithInvalidRequestBody() throws Exception {
+		
+		var response = executeInvalidRegistrationSimulation();
+		verifyErrorResponse(response);
+		
 	}
 
-	private void verificaComportamentoMock() {
-		verify(service, times(1)).cadastra(payload);	
+	private void verifyErrorResponse(MockHttpServletResponse response) {
+		verifyStatus(response.getStatus(), HttpStatus.BAD_REQUEST);
 	}
 
-	private void verificaRespostaEsperada(MockHttpServletResponse response) throws Exception {
-		var body = response.getContentAsString(StandardCharsets.UTF_8);
+	private MockHttpServletResponse executeInvalidRegistrationSimulation() throws Exception {
+		return mvc.perform(post("/services")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{}")
+				.characterEncoding("UTF-8"))
+				.andReturn().getResponse();
+	}
+
+	private void verifyMockBehavior() {
+		verify(service, times(1)).register(payload);	
+	}
+
+	private void verifyExpectedResponse(MockHttpServletResponse response) throws Exception {
 		
 		verifyStatus(response.getStatus(), HttpStatus.CREATED);
-		
+		var body = response.getContentAsString(StandardCharsets.UTF_8);
 		verifyBody(body);
 	}
 
@@ -105,22 +127,21 @@ class ServiceControllerTest {
 		
 	}
 
-	private MockHttpServletResponse executaSimulacaoCadastra() throws Exception {
-		
-		var jsonEsperado = criaJsonEsperado(payload, payloadJson);
+	private MockHttpServletResponse executeRegistrationSimulation(String requestBody) throws Exception {
 		
 		return mvc.perform(post("/services")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(jsonEsperado)
+				.content(requestBody)
 				.characterEncoding("UTF-8"))
 				.andReturn().getResponse();
 	}
 	
-	private <T> String criaJsonEsperado(T payload, JacksonTester<T> payloadJson) throws IOException {
+	private <T> String createExpectedJson(T payload, JacksonTester<T> payloadJson) throws IOException {
 		return payloadJson.write(payload).getJson();
 	}
 
-	private void preparaCenarioSimulacaoCadastra() {
-		when(service.cadastra(payload)).thenReturn(serviceDetalhado);
+	private String prepareSimulationScenarioForRegistration() throws IOException {
+		when(service.register(payload)).thenReturn(serviceDetalhado);
+		return createExpectedJson(payload, payloadJson);
 	}
 }

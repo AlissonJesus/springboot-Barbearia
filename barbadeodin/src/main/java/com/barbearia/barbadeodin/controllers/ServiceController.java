@@ -22,7 +22,7 @@ public class ServiceController {
 
 	@PostMapping
 	private ResponseEntity<ServiceDetailsDto> register(@RequestBody @Valid ServiceDto payload) {
-		ServiceDetailsDto serviceDetalhado = service.cadastra(payload);
+		ServiceDetailsDto serviceDetalhado = service.register(payload);
 		return ResponseEntity.created(null).body(serviceDetalhado);
 	}
 }
