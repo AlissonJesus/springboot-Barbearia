@@ -19,6 +19,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -76,8 +77,11 @@ class ServiceControllerTest {
 	}
 
 	private void verificaRespostaEsperada(MockHttpServletResponse response) throws Exception {
+		var body = response.getContentAsString(StandardCharsets.UTF_8);
+		
 		verifyStatus(response.getStatus(), HttpStatus.CREATED);
-		verifyBody(response.getContentAsString(StandardCharsets.UTF_8));
+		
+		verifyBody(body);
 	}
 
 	private void verifyBody(String body) throws JsonMappingException, JsonProcessingException {
@@ -93,7 +97,7 @@ class ServiceControllerTest {
         assertThat(name).isEqualTo(serviceDetalhado.name());
         assertThat(description).isEqualTo(serviceDetalhado.description());
         assertThat(price).isEqualTo(serviceDetalhado.price());
-        assertThat(duration).isEqualTo(serviceDetalhado.id());
+        assertThat(duration).isEqualTo(serviceDetalhado.duration());
 	}
 
 	private void verifyStatus(int status, HttpStatus type) {		
@@ -105,9 +109,10 @@ class ServiceControllerTest {
 		
 		var jsonEsperado = criaJsonEsperado(payload, payloadJson);
 		
-		return mvc.perform(post("/service")
+		return mvc.perform(post("/services")
 				.contentType(MediaType.APPLICATION_JSON)
-				.content(jsonEsperado))
+				.content(jsonEsperado)
+				.characterEncoding("UTF-8"))
 				.andReturn().getResponse();
 	}
 	
