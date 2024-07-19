@@ -7,7 +7,7 @@ public record ServiceDto(
 		
 		@NotBlank
 		String name, 
-		String Description, 
+		String description, 
 		
 		@NotNull
 		double price, 

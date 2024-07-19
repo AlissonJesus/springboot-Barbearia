@@ -25,7 +25,7 @@ public class ServiceService {
 		return null;
 	}
 
-	public ServiceDetailsDto updateById(ServiceDto payload) {
+	public ServiceDetailsDto updateById(Long id, ServiceDto service) {
 		// TODO Auto-generated method stub
 		return null;
 	}

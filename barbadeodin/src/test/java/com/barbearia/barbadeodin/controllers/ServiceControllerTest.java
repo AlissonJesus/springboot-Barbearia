@@ -59,17 +59,15 @@ class ServiceControllerTest {
 	@Autowired
 	private JacksonTester<ServiceDto> payloadJson;
 	
+	@Autowired
+	private JacksonTester<ServiceDetailsDto> serviceDetailJson;
+	
 	private ServiceDto payload = new ServiceDto(
 			"Corte", 
 			"Corte de Cabelo Profissional a pedido do cliente, finalizando no lavatório com Shampoo especializado e penteado ao final!",
 			25, 30);
 	
-	private ServiceDetailsDto serviceDetalhado = new ServiceDetailsDto(
-			1L, 
-			payload.name(), 
-			payload.Description(), 
-			payload.price(), 
-			payload.duration());
+	private ServiceDetailsDto serviceDetail = createServiceDetailsDto(1L, "Corte", 20.0);
 	
 	private String methodArgumentNotValidMessage = "Dados inválidos fornecidos";
 	private String invalidIdMessage = "Serviço não encontrado";
@@ -124,7 +122,7 @@ class ServiceControllerTest {
 	
 
 	private MockHttpServletResponse executeUpateByIdScenarioSimulation(String requestBody) throws Exception {
-		return mvc.perform(put("/services")
+		return mvc.perform(put("/services/{id}", 1L)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(requestBody)
 				.characterEncoding("UTF-8"))
@@ -132,10 +130,19 @@ class ServiceControllerTest {
 	}
 
 	private String prepareSimulationScenarioUpdateById() throws IOException {
-		when(service.updateById(payload)).thenReturn(serviceDetalhado);
+		var serviceUpadated = createServiceDetailsDto(2L, "Corte limpo", 10);
+		when(service.updateById(1L, payload)).thenReturn(serviceUpadated);
 		return createExpectedJson(payload, payloadJson);
-		
 	}
+	
+	private ServiceDetailsDto createServiceDetailsDto(Long id, String name, double price) {
+		return new ServiceDetailsDto(
+				id,
+				name, 
+				payload.description(),
+				price, 
+				payload.duration());
+	};
 
 	private void verifyMockBehaviorGetAll() {
 		verify(service, times(1)).getAll();	
@@ -161,7 +168,7 @@ class ServiceControllerTest {
 	}
 	
 	private List<ServiceDetailsDto> createServiceDetailsList() {
-		return List.of(serviceDetalhado);
+		return List.of(serviceDetail);
 	}
 
 	private void prepareFailSimulationScenarioGetById() {
@@ -176,7 +183,7 @@ class ServiceControllerTest {
 	}
 
 	private void prepareSimulationScenarioForGetById() {
-		when(service.getById(any(Long.class))).thenReturn(serviceDetalhado);
+		when(service.getById(any(Long.class))).thenReturn(serviceDetail);
 	}
 
 	private MockHttpServletResponse executeGetByIdScenarioSimulation() throws Exception {
@@ -206,7 +213,7 @@ class ServiceControllerTest {
 	}
 	
 	private void verifyMockBehaviorUpdateById() {
-		verify(service, times(1)).updateById(payload);	
+		verify(service, times(1)).updateById(1L, payload);	
 	}
 
 	private void verifyExpectedResponse(MockHttpServletResponse response, HttpStatus status) throws Exception {
@@ -223,11 +230,12 @@ class ServiceControllerTest {
         double price = rootNode.path("price").asDouble();
         int duration = rootNode.path("duration").asInt();
         
-        assertThat(id).isEqualTo(serviceDetalhado.id());
-        assertThat(name).isEqualTo(serviceDetalhado.name());
-        assertThat(description).isEqualTo(serviceDetalhado.description());
-        assertThat(price).isEqualTo(serviceDetalhado.price());
-        assertThat(duration).isEqualTo(serviceDetalhado.duration());
+        assertThat(id).isEqualTo(serviceDetail.id());
+        assertThat(name).isEqualTo(serviceDetail.name());
+        assertThat(description).isEqualTo(serviceDetail.description());
+        assertThat(price).isEqualTo(serviceDetail.price());
+        assertThat(duration).isEqualTo(serviceDetail.duration());
+    
 	}
 
 	private void verifyStatus(int status, HttpStatus type) {		
@@ -249,7 +257,7 @@ class ServiceControllerTest {
 	}
 
 	private String prepareSimulationScenarioForRegistration() throws IOException {
-		when(service.register(payload)).thenReturn(serviceDetalhado);
+		when(service.register(payload)).thenReturn(serviceDetail);
 		return createExpectedJson(payload, payloadJson);
 	}
 }
