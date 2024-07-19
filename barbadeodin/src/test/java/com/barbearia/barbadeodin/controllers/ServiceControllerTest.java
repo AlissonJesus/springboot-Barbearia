@@ -114,6 +114,28 @@ class ServiceControllerTest {
 		verifyMockBehaviorGetAll();
 	}
 	
+	@Test
+	void shouldUpdateByIdSucessfully() throws Exception {
+		var requestBody = prepareSimulationScenarioUpdateById();
+		var response = executeUpateByIdScenarioSimulation(requestBody);
+		verifyExpectedResponse(response, HttpStatus.OK);
+		verifyMockBehaviorUpdateById();
+	}
+	
+
+	private MockHttpServletResponse executeUpateByIdScenarioSimulation(String requestBody) throws Exception {
+		return mvc.perform(put("/services")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(requestBody)
+				.characterEncoding("UTF-8"))
+				.andReturn().getResponse();
+	}
+
+	private String prepareSimulationScenarioUpdateById() throws IOException {
+		when(service.updateById(payload)).thenReturn(serviceDetalhado);
+		return createExpectedJson(payload, payloadJson);
+		
+	}
 
 	private void verifyMockBehaviorGetAll() {
 		verify(service, times(1)).getAll();	
@@ -181,6 +203,10 @@ class ServiceControllerTest {
 	
 	private void verifyMockBehaviorGetById() {
 		verify(service, times(1)).getById(any(Long.class));	
+	}
+	
+	private void verifyMockBehaviorUpdateById() {
+		verify(service, times(1)).updateById(payload);	
 	}
 
 	private void verifyExpectedResponse(MockHttpServletResponse response, HttpStatus status) throws Exception {

@@ -25,4 +25,9 @@ public class ServiceService {
 		return null;
 	}
 
+	public ServiceDetailsDto updateById(ServiceDto payload) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
