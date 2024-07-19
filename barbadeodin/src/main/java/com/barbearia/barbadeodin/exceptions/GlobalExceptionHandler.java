@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -17,7 +19,13 @@ public class GlobalExceptionHandler {
         
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);
     }
-
+    
+    
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<?> handleError404(EntityNotFoundException ex) {
+        String errorMessage = "Serviço não encontrado";
+        return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
+    }
     
     
     @ExceptionHandler(Exception.class)

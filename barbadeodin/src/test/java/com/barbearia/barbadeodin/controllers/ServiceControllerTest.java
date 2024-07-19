@@ -97,7 +97,7 @@ class ServiceControllerTest {
 	}
 	
 	@Test
-	void shouldFailGetInvalidId() throws Exception {
+	void shouldFailGetServiceInvalidId() throws Exception {
 		prepareFailSimulationScenarioGetById();
 		var response = executeGetByIdScenarioSimulation();
 		verifyErrorResponseGetById(response);
