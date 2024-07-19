@@ -38,6 +38,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
@@ -68,6 +70,7 @@ class ServiceControllerTest {
 			payload.duration());
 	
 	private String methodArgumentNotValidMessage = "Dados inválidos fornecidos";
+	private String invalidIdMessage = "Serviço não encontrado";
 	
 	@Test
 	@DisplayName("Should register successfully and return status 200")
@@ -80,42 +83,59 @@ class ServiceControllerTest {
 	
 	@Test
 	@DisplayName("Should fail to register with invalid request body and return status 400")
-	void shouldFailToRegisterWithInvalidRequestBody() throws Exception {
+	void shouldFailRegisterInvalidRequestBody() throws Exception {
 		var response = executeRegistrationSimulation("{}");
-		verifyErrorResponse(response);
+		verifyErrorResponse(response, methodArgumentNotValidMessage);
 	}
 	
 	@Test
-	void shouldGetService() throws Exception {
+	void shouldGetServiceSucessfully() throws Exception {
 		prepareSimulationScenarioForGetById();
 		var response = executeGetByIdScenarioSimulation();
 		verifyExpectedResponse(response, HttpStatus.OK);
 		verifyMockBehaviorGetById();
 	}
 	
+	@Test
+	void shouldFailGetInvalidId() throws Exception {
+		prepareFailSimulationScenarioGetById();
+		var response = executeGetByIdScenarioSimulation();
+		verifyErrorResponseGetById(response);
+		verifyMockBehaviorGetById();
+	}
+	
+
+	private void prepareFailSimulationScenarioGetById() {
+		when(service.getById(any(Long.class))).thenThrow(new EntityNotFoundException());	
+	}
 	
 	
+
+	private void verifyErrorResponseGetById(MockHttpServletResponse response) throws UnsupportedEncodingException {
+		verifyStatus(response.getStatus(), HttpStatus.NOT_FOUND);
+		verifyMessage(response, invalidIdMessage);
+	}
 
 	private void prepareSimulationScenarioForGetById() {
 		when(service.getById(any(Long.class))).thenReturn(serviceDetalhado);
 	}
 
 	private MockHttpServletResponse executeGetByIdScenarioSimulation() throws Exception {
-		return mvc.perform(post("/services/{id}", 1L)
+		return mvc.perform(get("/services/{id}", 1L)
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8"))
 				.andReturn().getResponse();
 	}
 
-	private void verifyErrorResponse(MockHttpServletResponse response) throws Exception {
+	private void verifyErrorResponse(MockHttpServletResponse response, String message) throws Exception {
 		verifyStatus(response.getStatus(), HttpStatus.BAD_REQUEST);
-		verifyMessage(response);
+		verifyMessage(response, message);
 	}
 
 
-	private void verifyMessage(MockHttpServletResponse response) throws UnsupportedEncodingException {
+	private void verifyMessage(MockHttpServletResponse response, String message) throws UnsupportedEncodingException {
 		var body = response.getContentAsString(StandardCharsets.UTF_8);
-		assertThat(body).isEqualTo(methodArgumentNotValidMessage);
+		assertThat(body).isEqualTo(message);
 	}
 
 	private void verifyMockBehavior() {
