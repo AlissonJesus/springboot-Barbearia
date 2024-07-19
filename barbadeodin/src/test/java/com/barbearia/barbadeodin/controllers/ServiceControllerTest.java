@@ -130,8 +130,7 @@ class ServiceControllerTest {
 	}
 
 	private String prepareSimulationScenarioUpdateById() throws IOException {
-		var serviceUpadated = createServiceDetailsDto(2L, "Corte limpo", 10);
-		when(service.updateById(1L, payload)).thenReturn(serviceUpadated);
+		when(service.updateById(1L, payload)).thenReturn(serviceDetail);
 		return createExpectedJson(payload, payloadJson);
 	}
 	

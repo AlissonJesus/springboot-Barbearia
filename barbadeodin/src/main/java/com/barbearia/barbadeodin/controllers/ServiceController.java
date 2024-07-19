@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +41,12 @@ public class ServiceController {
 	public ResponseEntity<List<ServiceDetailsDto>> getAll(){
 		var serviceDetailsList = service.getAll();
 		return ResponseEntity.ok(serviceDetailsList);
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<ServiceDetailsDto> updateById(@RequestBody @Valid ServiceDto payload, @PathVariable Long id) {
+		var updatedService = service.updateById(id, payload);
+		return ResponseEntity.ok(updatedService);
 	}
 	
 }
