@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<?> handleError400(MethodArgumentNotValidException ex) {
         String errorMessage = "Dados inválidos fornecidos";
         
         return new ResponseEntity<>(errorMessage, HttpStatus.BAD_REQUEST);

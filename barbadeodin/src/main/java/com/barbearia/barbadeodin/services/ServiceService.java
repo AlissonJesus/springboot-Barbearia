@@ -1,5 +1,7 @@
 package com.barbearia.barbadeodin.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.barbearia.barbadeodin.dto.ServiceDetailsDto;
@@ -14,6 +16,11 @@ public class ServiceService {
 	}
 
 	public ServiceDetailsDto getById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<ServiceDetailsDto> getAll() {
 		// TODO Auto-generated method stub
 		return null;
 	}

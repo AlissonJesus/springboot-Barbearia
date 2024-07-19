@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -104,6 +106,41 @@ class ServiceControllerTest {
 		verifyMockBehaviorGetById();
 	}
 	
+	@Test
+	void shouldGetAllServices() throws Exception {
+		prepareSimulationScenarioGetAll();
+		var response = executeGetAllScenarioSimulation();
+		verifyExpectedResponseGetAll(response);
+		verifyMockBehaviorGetAll();
+	}
+	
+
+	private void verifyMockBehaviorGetAll() {
+		verify(service, times(1)).getAll();	
+	}
+
+	private void verifyExpectedResponseGetAll(MockHttpServletResponse response) throws Exception{
+		verifyStatus(response.getStatus(), HttpStatus.OK);
+		var body = response.getContentAsString(StandardCharsets.UTF_8);
+		JsonNode rootNode = mapper.readTree(body).get(0);
+		verifyBody(rootNode);
+	}
+
+
+	private MockHttpServletResponse executeGetAllScenarioSimulation() throws Exception {
+		return mvc.perform(get("/services")
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8"))
+				.andReturn().getResponse();
+	}
+
+	private void prepareSimulationScenarioGetAll() {
+		when(service.getAll()).thenReturn(createServiceDetailsList());	
+	}
+	
+	private List<ServiceDetailsDto> createServiceDetailsList() {
+		return List.of(serviceDetalhado);
+	}
 
 	private void prepareFailSimulationScenarioGetById() {
 		when(service.getById(any(Long.class))).thenThrow(new EntityNotFoundException());	
@@ -149,12 +186,11 @@ class ServiceControllerTest {
 	private void verifyExpectedResponse(MockHttpServletResponse response, HttpStatus status) throws Exception {
 		verifyStatus(response.getStatus(), status);
 		var body = response.getContentAsString(StandardCharsets.UTF_8);
-		verifyBody(body);
+		JsonNode rootNode = mapper.readTree(body);
+		verifyBody(rootNode);
 	}
 
-	private void verifyBody(String body) throws JsonMappingException, JsonProcessingException {
-		JsonNode rootNode = mapper.readTree(body);
-		
+	private void verifyBody(JsonNode rootNode) throws JsonMappingException, JsonProcessingException {	
 		Long id = rootNode.path("id").asLong();
 		String name = rootNode.path("name").asText();
 		String description = rootNode.path("description").asText();
