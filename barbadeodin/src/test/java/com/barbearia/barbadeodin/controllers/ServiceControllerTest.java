@@ -3,6 +3,7 @@ package com.barbearia.barbadeodin.controllers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -120,7 +121,23 @@ class ServiceControllerTest {
 		verifyMockBehaviorUpdateById();
 	}
 	
-
+	@Test
+	void shouldDeleteByIdSucessfully() throws Exception {
+		var id = 1L;
+		doNothing().when(service).deleteById(id);
+		var response = executeDeleteByIdScenarioSimulation();
+		
+		verifyStatus(response.getStatus(), HttpStatus.NO_CONTENT);
+		verify(service, times(1)).deleteById(id);
+	}
+	
+	private MockHttpServletResponse executeDeleteByIdScenarioSimulation() throws Exception {
+		return mvc.perform(delete("/service/{id}", 1L)
+				.contentType(MediaType.APPLICATION_JSON))
+		.andReturn().getResponse();
+	}
+	
+	
 	private MockHttpServletResponse executeUpateByIdScenarioSimulation(String requestBody) throws Exception {
 		return mvc.perform(put("/services/{id}", 1L)
 				.contentType(MediaType.APPLICATION_JSON)
