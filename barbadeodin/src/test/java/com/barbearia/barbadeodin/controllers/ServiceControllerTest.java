@@ -124,17 +124,19 @@ class ServiceControllerTest {
 	@Test
 	void shouldDeleteByIdSucessfully() throws Exception {
 		var id = 1L;
+		
 		doNothing().when(service).deleteById(id);
-		var response = executeDeleteByIdScenarioSimulation();
+		var response = executeDeleteByIdScenarioSimulation(id);
 		
 		verifyStatus(response.getStatus(), HttpStatus.NO_CONTENT);
 		verify(service, times(1)).deleteById(id);
 	}
 	
-	private MockHttpServletResponse executeDeleteByIdScenarioSimulation() throws Exception {
-		return mvc.perform(delete("/service/{id}", 1L)
-				.contentType(MediaType.APPLICATION_JSON))
-		.andReturn().getResponse();
+	private MockHttpServletResponse executeDeleteByIdScenarioSimulation(Long id) throws Exception {
+		return mvc.perform(delete("/services/{id}", id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8"))
+				.andReturn().getResponse();
 	}
 	
 	

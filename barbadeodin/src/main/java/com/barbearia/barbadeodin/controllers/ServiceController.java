@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,8 +46,14 @@ public class ServiceController {
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<ServiceDetailsDto> updateById(@RequestBody @Valid ServiceDto payload, @PathVariable Long id) {
-		var updatedService = service.updateById(id, payload);
+		ServiceDetailsDto updatedService = service.updateById(id, payload);
 		return ResponseEntity.ok(updatedService);
+	}
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<?> deleteById(@PathVariable Long id){
+		service.deleteById(id);
+		return ResponseEntity.noContent().build();
 	}
 	
 }
