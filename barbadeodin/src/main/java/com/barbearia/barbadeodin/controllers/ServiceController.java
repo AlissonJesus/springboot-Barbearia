@@ -1,5 +1,7 @@
 package com.barbearia.barbadeodin.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,6 +34,12 @@ public class ServiceController {
 	public ResponseEntity<ServiceDetailsDto> getById(@PathVariable Long id) {
 		var serviceRegistered = service.getById(id);
 		return ResponseEntity.ok(serviceRegistered);
+	}
+	
+	@GetMapping
+	public ResponseEntity<List<ServiceDetailsDto>> getAll(){
+		var serviceDetailsList = service.getAll();
+		return ResponseEntity.ok(serviceDetailsList);
 	}
 	
 }
