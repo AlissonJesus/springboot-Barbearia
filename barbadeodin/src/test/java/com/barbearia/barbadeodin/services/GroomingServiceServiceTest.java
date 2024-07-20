@@ -7,6 +7,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,6 +31,7 @@ class GroomingServiceServiceTest {
 	
 	private GroomingServiceDto payload = createServiceDto();
 	private GroomingService detailedServiceModel = createServiceDetailModel(1L); 
+	private GroomingServiceDetailsDto detailedServiceDto = createServiceDetailsDto();
 	
 	@Test
 	void shouldRegisterServiceSuccessfully() {
@@ -37,12 +40,36 @@ class GroomingServiceServiceTest {
 		verifyResultScenario(detailedServiceDto);
 	}
 	
+	private GroomingServiceDetailsDto createServiceDetailsDto() {
+		return new GroomingServiceDetailsDto(detailedServiceModel);
+	}
+
 	@Test
 	void shouldGetByIdSuccessfully() {
 		prepareScenarioGetById();
 		GroomingServiceDetailsDto detailedService = service.getById(1L);
 		verifyResultScenarioGetById(detailedService);
 	}
+	
+	@Test
+	void shouldGetAllSuccessfully() {
+		prepareScenarioGetAll();
+		List<GroomingServiceDetailsDto> detailedService = service.getAll();
+		verifyResultScenarioGetAll(detailedService);
+	}
+	
+	private void verifyResultScenarioGetAll(List<GroomingServiceDetailsDto> detailedService) {
+		verifyDetailedService(detailedService.get(0));
+	}
+
+	private List<GroomingService> createGroomingServiceDetailsList() {
+		return List.of(detailedServiceModel);
+	}
+
+	private void prepareScenarioGetAll() {
+		when(repository.findAll()).thenReturn(createGroomingServiceDetailsList());
+	}
+	
 
 	private void verifyResultScenarioGetById(GroomingServiceDetailsDto detailedService) {
 		verifyDetailedService(detailedService);
