@@ -7,35 +7,35 @@ import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import com.barbearia.barbadeodin.dto.ServiceDetailsDto;
-import com.barbearia.barbadeodin.dto.ServiceDto;
-import com.barbearia.barbadeodin.models.Service;
-import com.barbearia.barbadeodin.repositories.ServiceRepository;
+import com.barbearia.barbadeodin.dto.GroomingServiceDetailsDto;
+import com.barbearia.barbadeodin.dto.GroomingServiceDto;
+import com.barbearia.barbadeodin.models.GroomingService;
+import com.barbearia.barbadeodin.repositories.GroomingServiceRepository;
 
 @ExtendWith(MockitoExtension.class)
-class ServiceServiceTest {
+class GroomingServiceServiceTest {
 
-	@Autowired
-	private ServiceService service;
+	@InjectMocks
+	private GroomingServiceService service;
 	
 	@Mock
-	private ServiceRepository repository;
+	private GroomingServiceRepository repository;
 	
-	private ServiceDto payload = createServiceDto();
-	private Service detailedService = createServiceDetailModel(1L); 
+	private GroomingServiceDto payload = createServiceDto();
+	private GroomingService detailedServiceModel = createServiceDetailModel(1L); 
 	
 	@Test
 	void shouldRegisterServiceSuccessfully() {
 		prepareScenarioRegister();
-		ServiceDetailsDto detailedServiceDto = service.register(payload);
+		GroomingServiceDetailsDto detailedServiceDto = service.register(payload);
 		verifyResultScenario(detailedServiceDto);
 	}
 
-	private void verifyResultScenario(ServiceDetailsDto detailedServiceDto) {
+	private void verifyResultScenario(GroomingServiceDetailsDto detailedServiceDto) {
 		assertNotNull(detailedServiceDto);
 		assertThat(1L).isEqualTo(detailedServiceDto.id());
 		assertThat(payload.name()).isEqualTo(detailedServiceDto.name());
@@ -45,17 +45,18 @@ class ServiceServiceTest {
 	}
 
 	private void prepareScenarioRegister() {
-		when(repository.save(any(Service.class))).thenReturn(detailedService);
+		when(repository.save(any(GroomingService.class))).thenReturn(detailedServiceModel);
 	}
 	
-	private Service createServiceDetailModel(Long id) {
-		Service serviceModel = new Service(payload);  
+	private GroomingService createServiceDetailModel(Long id) {
+		GroomingService serviceModel = new GroomingService(payload);  
+		serviceModel.setId(id);
 		return serviceModel;
 	}
 	
 	
-	private ServiceDto createServiceDto() {
-		return new ServiceDto(
+	private GroomingServiceDto createServiceDto() {
+		return new GroomingServiceDto(
 				"Corte", 
 				"Corte de Cabelo Profissional a pedido do cliente, finalizando no lavatório com Shampoo especializado e penteado ao final!",
 				25, 30);

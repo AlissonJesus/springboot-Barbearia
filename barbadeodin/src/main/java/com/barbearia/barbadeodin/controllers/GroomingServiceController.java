@@ -13,40 +13,40 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.barbearia.barbadeodin.dto.ServiceDetailsDto;
-import com.barbearia.barbadeodin.dto.ServiceDto;
-import com.barbearia.barbadeodin.services.ServiceService;
+import com.barbearia.barbadeodin.dto.GroomingServiceDetailsDto;
+import com.barbearia.barbadeodin.dto.GroomingServiceDto;
+import com.barbearia.barbadeodin.services.GroomingServiceService;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("services")
-public class ServiceController {
+public class GroomingServiceController {
 	
 	@Autowired
-	private ServiceService service;
+	private GroomingServiceService service;
 
 	@PostMapping
-	public ResponseEntity<ServiceDetailsDto> register(@RequestBody @Valid ServiceDto payload) {
+	public ResponseEntity<GroomingServiceDetailsDto> register(@RequestBody @Valid GroomingServiceDto payload) {
 		var serviceDetalhado = service.register(payload);
 		return ResponseEntity.created(null).body(serviceDetalhado);
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<ServiceDetailsDto> getById(@PathVariable Long id) {
+	public ResponseEntity<GroomingServiceDetailsDto> getById(@PathVariable Long id) {
 		var serviceRegistered = service.getById(id);
 		return ResponseEntity.ok(serviceRegistered);
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<ServiceDetailsDto>> getAll(){
+	public ResponseEntity<List<GroomingServiceDetailsDto>> getAll(){
 		var serviceDetailsList = service.getAll();
 		return ResponseEntity.ok(serviceDetailsList);
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<ServiceDetailsDto> updateById(@RequestBody @Valid ServiceDto payload, @PathVariable Long id) {
-		ServiceDetailsDto updatedService = service.updateById(id, payload);
+	public ResponseEntity<GroomingServiceDetailsDto> updateById(@RequestBody @Valid GroomingServiceDto payload, @PathVariable Long id) {
+		GroomingServiceDetailsDto updatedService = service.updateById(id, payload);
 		return ResponseEntity.ok(updatedService);
 	}
 	

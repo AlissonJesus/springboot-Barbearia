@@ -21,9 +21,9 @@ import org.springframework.http.HttpStatus;
 
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.barbearia.barbadeodin.dto.ServiceDetailsDto;
-import com.barbearia.barbadeodin.dto.ServiceDto;
-import com.barbearia.barbadeodin.services.ServiceService;
+import com.barbearia.barbadeodin.dto.GroomingServiceDetailsDto;
+import com.barbearia.barbadeodin.dto.GroomingServiceDto;
+import com.barbearia.barbadeodin.services.GroomingServiceService;
 import com.barbearia.barbadeodin.utils.RequestSimulator;
 import com.barbearia.barbadeodin.utils.ServiceResponseVerifier;
 
@@ -32,25 +32,25 @@ import jakarta.persistence.EntityNotFoundException;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
-class ServiceControllerTest {
+class GroomingServiceControllerTest {
 	
 	@MockBean
-	private ServiceService service;
+	private GroomingServiceService service;
 	
 	@Autowired
 	private RequestSimulator requestSimulator;
 	
 	@Autowired
-	private JacksonTester<ServiceDto> payloadJson;
+	private JacksonTester<GroomingServiceDto> payloadJson;
 	
 	private MockHttpServletResponse response;
 	
-	private ServiceDto payload = new ServiceDto(
+	private GroomingServiceDto payload = new GroomingServiceDto(
 			"Corte", 
 			"Corte de Cabelo Profissional a pedido do cliente, finalizando no lavatório com Shampoo especializado e penteado ao final!",
 			25, 30);
 	
-	private ServiceDetailsDto serviceDetail = createServiceDetailDto(1L, "Corte", 20.0);
+	private GroomingServiceDetailsDto serviceDetail = createServiceDetailDto(1L, "Corte", 20.0);
 	
 	private String methodArgumentNotValidMessage = "Dados inválidos fornecidos";
 	private String invalidIdMessage = "Serviço não encontrado";
@@ -189,12 +189,12 @@ class ServiceControllerTest {
 		return payloadJson.write(payload).getJson();
 	}
 	
-	private List<ServiceDetailsDto> createServiceDetailsList() {
+	private List<GroomingServiceDetailsDto> createServiceDetailsList() {
 		return List.of(serviceDetail);
 	}
 	
-	private ServiceDetailsDto createServiceDetailDto(Long id, String name, double price) {
-		return new ServiceDetailsDto(
+	private GroomingServiceDetailsDto createServiceDetailDto(Long id, String name, double price) {
+		return new GroomingServiceDetailsDto(
 				id,
 				name, 
 				payload.description(),

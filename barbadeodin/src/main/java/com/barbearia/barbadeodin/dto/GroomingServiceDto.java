@@ -3,7 +3,7 @@ package com.barbearia.barbadeodin.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record ServiceDto(
+public record GroomingServiceDto(
 		
 		@NotBlank
 		String name, 

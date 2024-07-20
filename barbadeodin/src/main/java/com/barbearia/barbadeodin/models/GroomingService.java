@@ -2,7 +2,7 @@ package com.barbearia.barbadeodin.models;
 
 import java.time.LocalDateTime;
 
-import com.barbearia.barbadeodin.dto.ServiceDto;
+import com.barbearia.barbadeodin.dto.GroomingServiceDto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,7 +23,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class Service {
+public class GroomingService {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
@@ -33,11 +33,15 @@ public class Service {
 	Integer duration;
 	LocalDateTime createdAt;
 	
-	public Service(ServiceDto service) {
+	public GroomingService(GroomingServiceDto service) {
 		name = service.name();
 		description = service.description();
 		price = service.price();
 		duration = service.duration();
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 	
