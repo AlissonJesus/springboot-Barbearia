@@ -23,8 +23,8 @@ public class GroomingServiceService {
 	
 
 	public GroomingServiceDetailsDto getById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		GroomingService service = repository.getReferenceById(id);
+		return new GroomingServiceDetailsDto(service);
 	}
 
 	public List<GroomingServiceDetailsDto> getAll() {
