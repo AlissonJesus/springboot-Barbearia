@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.barbearia.barbadeodin.dto.ServiceDetailsDto;
-import com.barbearia.barbadeodin.models.ServiceDto;
+import com.barbearia.barbadeodin.dto.ServiceDto;
 import com.barbearia.barbadeodin.services.ServiceService;
 
 import jakarta.validation.Valid;

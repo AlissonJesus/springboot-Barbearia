@@ -22,7 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.barbearia.barbadeodin.dto.ServiceDetailsDto;
-import com.barbearia.barbadeodin.models.ServiceDto;
+import com.barbearia.barbadeodin.dto.ServiceDto;
 import com.barbearia.barbadeodin.services.ServiceService;
 import com.barbearia.barbadeodin.utils.RequestSimulator;
 import com.barbearia.barbadeodin.utils.ServiceResponseVerifier;
