@@ -1,4 +1,4 @@
-package com.barbearia.barbadeodin.models;
+package com.barbearia.barbadeodin.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

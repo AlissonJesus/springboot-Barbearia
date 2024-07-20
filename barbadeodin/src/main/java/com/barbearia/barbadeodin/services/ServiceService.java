@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.barbearia.barbadeodin.dto.ServiceDetailsDto;
-import com.barbearia.barbadeodin.models.ServiceDto;
+import com.barbearia.barbadeodin.dto.ServiceDto;
 
 @Service
 public class ServiceService {
