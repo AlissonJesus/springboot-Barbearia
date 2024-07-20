@@ -3,6 +3,8 @@ package com.barbearia.barbadeodin.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
@@ -34,8 +36,29 @@ class GroomingServiceServiceTest {
 		GroomingServiceDetailsDto detailedServiceDto = service.register(payload);
 		verifyResultScenario(detailedServiceDto);
 	}
+	
+	@Test
+	void shouldGetByIdSuccessfully() {
+		prepareScenarioGetById();
+		GroomingServiceDetailsDto detailedService = service.getById(1L);
+		verifyResultScenarioGetById(detailedService);
+	}
 
-	private void verifyResultScenario(GroomingServiceDetailsDto detailedServiceDto) {
+	private void verifyResultScenarioGetById(GroomingServiceDetailsDto detailedService) {
+		verifyDetailedService(detailedService);
+		verify(repository, times(1)).getReferenceById(any(Long.class));
+	}
+
+	private void prepareScenarioGetById() {
+		when(repository.getReferenceById(any(Long.class))).thenReturn(detailedServiceModel);
+	}
+
+	private void verifyResultScenario(GroomingServiceDetailsDto detailedService) {
+		verifyDetailedService(detailedService);
+		verify(repository, times(1)).save(any(GroomingService.class));
+	}
+
+	private void verifyDetailedService(GroomingServiceDetailsDto detailedServiceDto) {
 		assertNotNull(detailedServiceDto);
 		assertThat(1L).isEqualTo(detailedServiceDto.id());
 		assertThat(payload.name()).isEqualTo(detailedServiceDto.name());
