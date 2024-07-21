@@ -3,6 +3,7 @@ package com.barbearia.barbadeodin.services;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -61,14 +62,29 @@ class GroomingServiceServiceTest {
 		verifyResultScenarioUpdateById(updatedService);
 	}
 	
+	@Test
+	void shouldDeleteByIdSucessfully() {
+		prepareScenarioDeleteById();
+		service.deleteById(1L);
+		verifyMockDeleteById();
+	}
+	
+	private void verifyMockDeleteById() {
+		verify(repository).deleteById(1L);
+		
+	}
+
+	private void prepareScenarioDeleteById() {
+		doNothing().when(repository).deleteById(1L);	
+	}
+
 	private void prepareScenraioUpdateById() {
 		when(repository.getReferenceById(any(Long.class))).thenReturn(detailedServiceModel);
 	}
 
 	private void verifyResultScenarioUpdateById(GroomingServiceDetailsDto updatedService) {
 		verifyDetailedService(updatedService);
-		verify(repository, times(1)).getReferenceById(any(Long.class));
-		
+		verify(repository, times(1)).getReferenceById(any(Long.class));	
 	}
 
 	private void verifyResultScenarioGetAll(List<GroomingServiceDetailsDto> detailedService) {
