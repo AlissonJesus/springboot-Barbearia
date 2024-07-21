@@ -39,8 +39,7 @@ public class GroomingServiceService {
 	}
 
 	public void deleteById(Long id) {
-		// TODO Auto-generated method stub
-		
+		repository.deleteById(id);
 	}
 
 }
