@@ -28,8 +28,8 @@ public class GroomingServiceService {
 	}
 
 	public List<GroomingServiceDetailsDto> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+		List<GroomingService> serviceList = repository.findAll();
+		return serviceList.stream().map(GroomingServiceDetailsDto::new).toList();
 	}
 
 	public GroomingServiceDetailsDto updateById(Long id, GroomingServiceDto service) {
