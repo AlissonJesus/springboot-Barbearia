@@ -39,10 +39,6 @@ class GroomingServiceServiceTest {
 		GroomingServiceDetailsDto detailedServiceDto = service.register(payload);
 		verifyResultScenario(detailedServiceDto);
 	}
-	
-	private GroomingServiceDetailsDto createServiceDetailsDto() {
-		return new GroomingServiceDetailsDto(detailedServiceModel);
-	}
 
 	@Test
 	void shouldGetByIdSuccessfully() {
@@ -58,6 +54,23 @@ class GroomingServiceServiceTest {
 		verifyResultScenarioGetAll(detailedService);
 	}
 	
+	@Test
+	void shouldUpdateByIdSucessfully() {
+		prepareScenraioUpdateById();
+		GroomingServiceDetailsDto updatedService = service.updateById(1L, payload);
+		verifyResultScenarioUpdateById(updatedService);
+	}
+	
+	private void prepareScenraioUpdateById() {
+		when(repository.getReferenceById(any(Long.class))).thenReturn(detailedServiceModel);
+	}
+
+	private void verifyResultScenarioUpdateById(GroomingServiceDetailsDto updatedService) {
+		verifyDetailedService(updatedService);
+		verify(repository, times(1)).getReferenceById(any(Long.class));
+		
+	}
+
 	private void verifyResultScenarioGetAll(List<GroomingServiceDetailsDto> detailedService) {
 		verifyDetailedService(detailedService.get(0));
 	}
@@ -104,6 +117,9 @@ class GroomingServiceServiceTest {
 		return serviceModel;
 	}
 	
+	private GroomingServiceDetailsDto createServiceDetailsDto() {
+		return new GroomingServiceDetailsDto(detailedServiceModel);
+	}	
 	
 	private GroomingServiceDto createServiceDto() {
 		return new GroomingServiceDto(
