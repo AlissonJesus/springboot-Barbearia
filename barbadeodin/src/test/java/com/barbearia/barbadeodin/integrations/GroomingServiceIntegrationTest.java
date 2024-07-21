@@ -29,6 +29,60 @@ import com.barbearia.barbadeodin.utils.RequestSimulator;
 @ActiveProfiles("test")
 class GroomingServiceIntegrationTest {
 
+	@Autowired
+	private GroomingServiceRepository repository;
+	
+	@Autowired
+	private RequestSimulator simulator;
+	
+	@Autowired
+	private JacksonTester<GroomingServiceDto> payloadJson;
+	@Autowired
+	private JacksonTester<GroomingServiceDetailsDto> serviceDetailsJson;
+	
+	private GroomingServiceDto serviceDto = new GroomingServiceDto(
+			"Corte", 
+			"Corte de Cabelo Profissional a pedido do cliente, finalizando no lavatório "
+			+ "com Shampoo especializado e penteado ao final!",
+			25, 30);
+	private GroomingServiceDetailsDto serviceDetailsDto = createServiceDetailDto(
+			1L, 
+			serviceDto.name(), 
+			serviceDto.price());
+	
+	
+	
+	
+	@Test
+	void shouldRegisterSuccessfully() throws Exception {
+		var jsonContent = createJson(serviceDto, payloadJson);
+		var response = simulator.simulatePostRequest("/services", jsonContent);
+		verifyResponseRegister(response);
+	}
+	
+	
+	
+	private void verifyResponseRegister(MockHttpServletResponse response) throws IOException {
+		var expectedBody = createJson(serviceDetailsDto, serviceDetailsJson);
+		var responseBody = response.getContentAsString(StandardCharsets.UTF_8);
+		assertNotNull(responseBody);
+		
+		assertThat(responseBody).isEqualTo(expectedBody);
+	}
+
+	private <T> String createJson(T payload, JacksonTester<T> payloadJson) throws IOException {
+		return payloadJson.write(payload).getJson();
+	}
+	
+	private GroomingServiceDetailsDto createServiceDetailDto(Long id, String name, double price) {
+		return new GroomingServiceDetailsDto(
+				id,
+				name, 
+				serviceDto.description(),
+				price, 
+				serviceDto.duration());
+	};
+	
 	
 
 }
