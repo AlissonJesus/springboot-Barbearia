@@ -33,8 +33,9 @@ public class GroomingServiceService {
 	}
 
 	public GroomingServiceDetailsDto updateById(Long id, GroomingServiceDto service) {
-		// TODO Auto-generated method stub
-		return null;
+		GroomingService serviceFound = repository.getReferenceById(id);
+		serviceFound.update(service);
+		return new GroomingServiceDetailsDto(serviceFound);
 	}
 
 	public void deleteById(Long id) {

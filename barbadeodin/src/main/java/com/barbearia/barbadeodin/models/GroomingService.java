@@ -43,6 +43,13 @@ public class GroomingService {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	public void update(GroomingServiceDto service) {
+		name = service.name();
+		description = service.description();
+		price = service.price();
+		duration = service.duration();
+	}
 	
 	
 }
