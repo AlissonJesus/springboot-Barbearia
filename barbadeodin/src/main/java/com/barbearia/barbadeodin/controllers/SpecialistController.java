@@ -1,5 +1,7 @@
 package com.barbearia.barbadeodin.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,4 +35,11 @@ public class SpecialistController {
 		var existingSpecialist = service.getById(id);
 		return ResponseEntity.ok(existingSpecialist);
 	}
+	
+	@GetMapping
+	public ResponseEntity<List<SpecialistDetailDto>> getAll() {
+		var exisntingSpecialists = service.getAll();
+		return ResponseEntity.ok(exisntingSpecialists);
+	}
+	
 }
