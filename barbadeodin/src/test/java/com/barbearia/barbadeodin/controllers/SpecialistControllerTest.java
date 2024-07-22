@@ -67,7 +67,7 @@ class SpecialistControllerTest {
 	}
 
 	private MockHttpServletResponse executeGetByIdScenarioSimulate() throws Exception {
-		return simulator.simulateGetRequest("/specialists", 1L);
+		return simulator.simulateGetRequest("/specialists/{id}", 1L);
 	}
 
 	private void prepareGetByIdSimulationScenario() {
