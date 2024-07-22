@@ -3,6 +3,7 @@ package com.barbearia.barbadeodin.controllers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -81,13 +82,36 @@ class SpecialistControllerTest {
 		MockHttpServletResponse response = executeUpdateByIdSimulate();
 		verifyResultUpdateByIdSimulate(response);
 	}
+	
+	@Test
+	void shouldDeleteByIdSucessFully() throws Exception {
+		prepareDeleteByIdSimulate();
+		var response = executeDeleteByIdSimulate();
+		verifyResultDeleteByIdSimulate(response);
+	}
+
+	private void verifyResultDeleteByIdSimulate(MockHttpServletResponse response) {
+		verifyStatus(response, HttpStatus.NO_CONTENT);
+		verifyDeleteByIdMockBehavior();
+	}
+
+	private void verifyDeleteByIdMockBehavior() {
+		verify(service, times(1)).deleteById(any(Long.class));
+	}
+
+	private MockHttpServletResponse executeDeleteByIdSimulate() throws Exception {
+		return simulator.simulateDeleteRequest("/specialists/{id}", 1L);
+	}
+
+	private void prepareDeleteByIdSimulate() {
+		doNothing().when(service).deleteById(any(Long.class));
+	}
 
 	private void verifyResultUpdateByIdSimulate(MockHttpServletResponse response) throws IOException {
 		verifyStatus(response, HttpStatus.OK);
 		verifyBody(response, specialistDetailDto, specialistDetailJson);
 		
 		verifyUpdateByIdMockBehavior();
-		
 	}
 
 	private void verifyUpdateByIdMockBehavior() {
