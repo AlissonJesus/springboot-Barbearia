@@ -26,4 +26,9 @@ public class SpecialistService {
 		return null;
 	}
 
+	public SpecialistDetailDto updateById(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

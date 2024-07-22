@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +41,12 @@ public class SpecialistController {
 	public ResponseEntity<List<SpecialistDetailDto>> getAll() {
 		var exisntingSpecialists = service.getAll();
 		return ResponseEntity.ok(exisntingSpecialists);
+	}
+	
+	@PutMapping("/{id}")
+	public ResponseEntity<SpecialistDetailDto> updateById(@RequestBody @Valid SpecialistDto payload, @PathVariable Long id) {
+		var updatedSpecialist = service.updateById(id);
+		return ResponseEntity.ok(updatedSpecialist);
 	}
 	
 }
