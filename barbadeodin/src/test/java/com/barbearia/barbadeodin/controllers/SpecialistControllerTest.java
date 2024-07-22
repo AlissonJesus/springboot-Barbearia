@@ -74,6 +74,33 @@ class SpecialistControllerTest {
 		var response = executeGetAllRequestSimulate();
 		verifyResultGetAllRequestSimulation(response);
 	}
+	
+	@Test
+	void shouldUpdateByIdSucessFully() throws Exception {
+		prepareUpdateByIdSimulate();
+		MockHttpServletResponse response = executeUpdateByIdSimulate();
+		verifyResultUpdateByIdSimulate(response);
+	}
+
+	private void verifyResultUpdateByIdSimulate(MockHttpServletResponse response) throws IOException {
+		verifyStatus(response, HttpStatus.OK);
+		verifyBody(response, specialistDetailDto, specialistDetailJson);
+		
+		verifyUpdateByIdMockBehavior();
+		
+	}
+
+	private void verifyUpdateByIdMockBehavior() {
+		verify(service, times(1)).updateById(any(Long.class));
+	}
+
+	private MockHttpServletResponse executeUpdateByIdSimulate() throws IOException, Exception {
+		return simulator.simulatePutRequest("/specialists/{id}", 1L, createJson(specialistDto, specialistJson));
+	}
+
+	private void prepareUpdateByIdSimulate() {
+		when(service.updateById(any(Long.class))).thenReturn(specialistDetailDto);	
+	}
 
 	private void verifyResultGetAllRequestSimulation(MockHttpServletResponse response) throws IOException {
 		verifyStatus(response, HttpStatus.OK);
