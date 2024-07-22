@@ -49,9 +49,29 @@ class SpecialistControllerTest {
 
 	@Test
 	void shouldRegisterSuccessfully() throws Exception {
-		prepareScenarioSimulateRegister();
-		var response = executeScenarioSimulateRegister();
+		prepareRegisterSimulationScenario();
+		var response = executeRegisterScenarioSimulate();
 		verifyResultScenarioSimulateRegister(response);
+	}
+	
+	@Test
+	void shouldGetByIdSucessfully() throws Exception {
+		prepareGetByIdSimulationScenario();
+		var response = executeGetByIdScenarioSimulate();
+		verifyResultGetByIdSimulationScenario(response);
+	}
+
+	private void verifyResultGetByIdSimulationScenario(MockHttpServletResponse response) throws IOException {
+		verifyStatus(response, HttpStatus.OK);
+		verifyBody(response);		
+	}
+
+	private MockHttpServletResponse executeGetByIdScenarioSimulate() throws Exception {
+		return simulator.simulateGetRequest("/specialists", 1L);
+	}
+
+	private void prepareGetByIdSimulationScenario() {
+		when(service.getById(any(Long.class))).thenReturn(specialistDetailDto);
 	}
 
 	private void verifyResultScenarioSimulateRegister(MockHttpServletResponse response) throws Exception {
@@ -78,12 +98,12 @@ class SpecialistControllerTest {
 		return specialistJson.write(specialist).getJson();
 	}
 
-	private MockHttpServletResponse executeScenarioSimulateRegister() throws Exception {
+	private MockHttpServletResponse executeRegisterScenarioSimulate() throws Exception {
 		String jsonContent = createJson(specialistDto, specialistJson);
 		return simulator.simulatePostRequest("/specialists", jsonContent);
 	}
 
-	private void prepareScenarioSimulateRegister() {
+	private void prepareRegisterSimulationScenario() {
 		when(service.register(any(SpecialistDto.class))).thenReturn(specialistDetailDto);	
 	}
 
