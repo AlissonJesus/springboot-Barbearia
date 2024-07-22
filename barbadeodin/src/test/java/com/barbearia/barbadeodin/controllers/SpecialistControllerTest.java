@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +42,16 @@ class SpecialistControllerTest {
 	private JacksonTester<SpecialistDto> specialistJson;
 	
 	@Autowired
-	private JacksonTester<SpecialistDetailDto> spcialistDetailJson;
+	private JacksonTester<SpecialistDetailDto> specialistDetailJson;
+	
+	@Autowired
+	private JacksonTester<List<SpecialistDetailDto>> spcialistDetailListJson;
 	
 	private SpecialistDto specialistDto = new SpecialistDto("Andson Alves", "UrlImagem on");
 	private SpecialistDetailDto specialistDetailDto = new SpecialistDetailDto(1L, specialistDto.name(), specialistDto.imagemUrl());
+	private List<SpecialistDetailDto> specialistDetailList = List.of(
+			specialistDetailDto
+			);
 
 
 	@Test
@@ -60,10 +67,40 @@ class SpecialistControllerTest {
 		var response = executeGetByIdScenarioSimulate();
 		verifyResultGetByIdSimulationScenario(response);
 	}
+	
+	@Test
+	void shouldGetAllSucessFully() throws Exception {
+		prepareGetAllSimulationScenario();
+		var response = executeGetAllRequestSimulate();
+		verifyResultGetAllRequestSimulation(response);
+	}
+
+	private void verifyResultGetAllRequestSimulation(MockHttpServletResponse response) throws IOException {
+		verifyStatus(response, HttpStatus.OK);
+		verifyBody(response, specialistDetailList, spcialistDetailListJson);
+		
+		verifyGetAllMockBehavior();
+		
+	}
+
+	private void verifyGetAllMockBehavior() {
+		verify(service, times(1)).getAll();
+		
+	}
+
+	private MockHttpServletResponse executeGetAllRequestSimulate() throws Exception {
+		return simulator.simulateGetRequest("/specialists");
+		
+	}
+
+	private void prepareGetAllSimulationScenario() {		
+		when(service.getAll()).thenReturn(specialistDetailList);
+		
+	}
 
 	private void verifyResultGetByIdSimulationScenario(MockHttpServletResponse response) throws IOException {
 		verifyStatus(response, HttpStatus.OK);
-		verifyBody(response);		
+		verifyBody(response, specialistDetailDto, specialistDetailJson);		
 	}
 
 	private MockHttpServletResponse executeGetByIdScenarioSimulate() throws Exception {
@@ -76,7 +113,7 @@ class SpecialistControllerTest {
 
 	private void verifyResultScenarioSimulateRegister(MockHttpServletResponse response) throws Exception {
 		verifyStatus(response, HttpStatus.CREATED);
-		verifyBody(response);
+		verifyBody(response, specialistDetailDto, specialistDetailJson);
 		verifyMockBehaviorRegister();
 	}
 
@@ -84,9 +121,9 @@ class SpecialistControllerTest {
 		verify(service, times(1)).register(any(SpecialistDto.class));
 	}
 
-	private void verifyBody(MockHttpServletResponse response) throws IOException {
+	private <T> void verifyBody(MockHttpServletResponse response, T detailedDto, JacksonTester<T> jsonCreator) throws IOException {
 		var body = response.getContentAsString(StandardCharsets.UTF_8);
-		var expectedJson = createJson(specialistDetailDto, spcialistDetailJson);
+		var expectedJson = createJson(detailedDto, jsonCreator);
 		assertThat(body).isEqualTo(expectedJson);
 	}
 
