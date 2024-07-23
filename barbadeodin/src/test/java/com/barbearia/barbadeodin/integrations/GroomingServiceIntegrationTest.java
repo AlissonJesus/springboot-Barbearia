@@ -51,10 +51,12 @@ class GroomingServiceIntegrationTest {
     @Autowired
     private JacksonTester<List<GroomingServiceDetailsDto>> serviceDetailsListJson;
     
+    
     private GroomingServiceDto serviceDto = new GroomingServiceDto(
             "Corte", 
             "Corte de Cabelo Profissional a pedido do cliente, finalizando no lavatório com Shampoo especializado e penteado ao final!",
             25, 30);;
+     
     private GroomingService serviceModel;
     private GroomingServiceDetailsDto serviceDetailsDto = createServiceDetailDto(2L, serviceDto.name(), serviceDto.price());
     private List<GroomingServiceDetailsDto> serviceDetialDtoList;
@@ -96,14 +98,9 @@ class GroomingServiceIntegrationTest {
 	}
 
 	private GroomingService createGroomingServiceModel(Long id, String name, Double price) {
-		return new GroomingService(
-				id, 
-				name, 
-				serviceDto.description(),
-				price,
-				serviceDto.duration(),
-				null
-				);
+		var serviceModel = new GroomingService(serviceDto);
+		serviceModel.setId(id);
+		return serviceModel;
 	}
 	
 	

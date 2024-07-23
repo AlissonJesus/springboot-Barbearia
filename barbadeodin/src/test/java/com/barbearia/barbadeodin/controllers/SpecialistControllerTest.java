@@ -22,6 +22,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import com.barbearia.barbadeodin.dto.GroomingServiceDetailsDto;
+import com.barbearia.barbadeodin.dto.GroomingServiceDto;
 import com.barbearia.barbadeodin.dto.SpecialistDetailDto;
 import com.barbearia.barbadeodin.dto.SpecialistDto;
 
@@ -48,11 +50,15 @@ class SpecialistControllerTest {
 	@Autowired
 	private JacksonTester<List<SpecialistDetailDto>> spcialistDetailListJson;
 	
-	private SpecialistDto specialistDto = new SpecialistDto("Andson Alves", "UrlImagem on");
-	private SpecialistDetailDto specialistDetailDto = new SpecialistDetailDto(1L, specialistDto.name(), specialistDto.imagemUrl());
-	private List<SpecialistDetailDto> specialistDetailList = List.of(
-			specialistDetailDto
-			);
+	private SpecialistDto specialistDto = new SpecialistDto("João lucas", "imagemUrl on", List.of(1L));
+	private GroomingServiceDto payload = new GroomingServiceDto(
+			"Corte", 
+			"Corte de Cabelo Profissional a pedido do cliente, finalizando no lavatório com Shampoo especializado e penteado ao final!",
+			25, 30);
+	private GroomingServiceDetailsDto serviceDetail = createServiceDetailDto(1L, payload.name(), payload.price());
+	private List<GroomingServiceDetailsDto> services = List.of(serviceDetail);
+	private SpecialistDetailDto specialistDetailDto = new SpecialistDetailDto(1L, specialistDto.name(), specialistDto.imagemUrl(), services);
+	private List<SpecialistDetailDto> specialistDetailList = List.of(specialistDetailDto);
 
 
 	@Test
@@ -194,5 +200,14 @@ class SpecialistControllerTest {
 	private void prepareRegisterSimulationScenario() {
 		when(service.register(any(SpecialistDto.class))).thenReturn(specialistDetailDto);	
 	}
+	
+	private GroomingServiceDetailsDto createServiceDetailDto(Long id, String name, double price) {
+		return new GroomingServiceDetailsDto(
+				id,
+				name, 
+				payload.description(),
+				price, 
+				payload.duration());
+	};
 
 }

@@ -1,6 +1,7 @@
 package com.barbearia.barbadeodin.models;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.barbearia.barbadeodin.dto.GroomingServiceDto;
 
@@ -9,7 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -17,9 +17,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name = "Service")
+@Entity(name = "GroomingService")
 @Table(name = "services")
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -33,6 +34,9 @@ public class GroomingService {
 	Integer duration;
 	LocalDateTime createdAt;
 	
+	@ManyToMany(mappedBy = "services")
+    List<Specialist> specialists;
+	
 	public GroomingService(GroomingServiceDto service) {
 		name = service.name();
 		description = service.description();
@@ -40,9 +44,6 @@ public class GroomingService {
 		duration = service.duration();
 	}
 	
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	public void update(GroomingServiceDto service) {
 		name = service.name();
