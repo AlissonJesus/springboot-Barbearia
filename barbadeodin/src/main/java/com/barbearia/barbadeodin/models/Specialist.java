@@ -18,10 +18,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity(name = "Specialist")
 @Table(name = "specialists")
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -36,8 +38,7 @@ public class Specialist {
     @JoinTable(
         name = "specialist_services",
         joinColumns = @JoinColumn(name = "specialist_id"),
-        inverseJoinColumns = @JoinColumn(name = "service_id")
-    )
+        inverseJoinColumns = @JoinColumn(name = "service_id"))
 	List<GroomingService> services;
 	
 	public Specialist(SpecialistDto payload, List<GroomingService> serviceList) {

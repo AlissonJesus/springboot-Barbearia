@@ -56,8 +56,8 @@ class SpecialistControllerTest {
 			"Corte de Cabelo Profissional a pedido do cliente, finalizando no lavatório com Shampoo especializado e penteado ao final!",
 			25, 30);
 	private GroomingServiceDetailsDto serviceDetail = createServiceDetailDto(1L, payload.name(), payload.price());
-	private List<GroomingServiceDetailsDto> services = List.of(serviceDetail);
-	private SpecialistDetailDto specialistDetailDto = new SpecialistDetailDto(1L, specialistDto.name(), specialistDto.imagemUrl(), services);
+	private List<Long> servicesIds = List.of(1L);
+	private SpecialistDetailDto specialistDetailDto = new SpecialistDetailDto(1L, specialistDto.name(), specialistDto.imagemUrl(), servicesIds);
 	private List<SpecialistDetailDto> specialistDetailList = List.of(specialistDetailDto);
 
 
@@ -121,7 +121,7 @@ class SpecialistControllerTest {
 	}
 
 	private void verifyUpdateByIdMockBehavior() {
-		verify(service, times(1)).updateById(any(Long.class));
+		verify(service, times(1)).updateById(any(Long.class), any(SpecialistDto.class));
 	}
 
 	private MockHttpServletResponse executeUpdateByIdSimulate() throws IOException, Exception {
@@ -129,7 +129,7 @@ class SpecialistControllerTest {
 	}
 
 	private void prepareUpdateByIdSimulate() {
-		when(service.updateById(any(Long.class))).thenReturn(specialistDetailDto);	
+		when(service.updateById(any(Long.class), any(SpecialistDto.class))).thenReturn(specialistDetailDto);	
 	}
 
 	private void verifyResultGetAllRequestSimulation(MockHttpServletResponse response) throws IOException {

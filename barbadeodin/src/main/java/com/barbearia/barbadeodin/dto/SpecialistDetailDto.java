@@ -2,18 +2,21 @@ package com.barbearia.barbadeodin.dto;
 
 import java.util.List;
 
-import com.barbearia.barbadeodin.models.GroomingService;
 import com.barbearia.barbadeodin.models.Specialist;
 
-public record SpecialistDetailDto(Long id, String name, String imageUrl, List<GroomingServiceDetailsDto> services) {
+public record SpecialistDetailDto(
+	    Long id,
+	    String name,
+	    String imagemUrl,
+	    List<Long> serviceIds
+	    
+	    
+	) {
 
-	public SpecialistDetailDto(Specialist specialist, List<GroomingServiceDetailsDto> services) {
-		this(specialist.getId(), 
-	             specialist.getName(), 
-	             specialist.getImagemUrl(), 
-	             services);
-	}
-
-	
-
-}
+	public SpecialistDetailDto(Specialist specialist, List<Long> serviceIds) {
+		this(
+				specialist.getId(),
+				specialist.getName(),
+				specialist.getImagemUrl(),
+				serviceIds);
+	}}

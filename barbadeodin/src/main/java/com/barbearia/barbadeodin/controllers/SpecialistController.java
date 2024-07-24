@@ -46,7 +46,7 @@ public class SpecialistController {
 	
 	@PutMapping("/{id}")
 	public ResponseEntity<SpecialistDetailDto> updateById(@RequestBody @Valid SpecialistDto payload, @PathVariable Long id) {
-		var updatedSpecialist = service.updateById(id);
+		var updatedSpecialist = service.updateById(id, payload);
 		return ResponseEntity.ok(updatedSpecialist);
 	}
 	
