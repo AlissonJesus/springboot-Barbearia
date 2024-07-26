@@ -2,6 +2,8 @@ package com.barbearia.barbadeodin.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +28,12 @@ public class CustomerController {
 	public ResponseEntity<CustomerResponseDto> register(@RequestBody @Valid CustomerRequestDto requesBodyDto){
 		CustomerResponseDto registeredCustomer = service.register(requesBodyDto);
 		return ResponseEntity.created(null).body(registeredCustomer);
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<CustomerResponseDto> getByid(@PathVariable Long id){
+		var existingCustomer = service.getById(id);
+		return ResponseEntity.ok(existingCustomer);
+		
 	}
 }

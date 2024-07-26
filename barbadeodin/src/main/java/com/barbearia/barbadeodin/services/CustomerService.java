@@ -13,4 +13,10 @@ public class CustomerService {
 		return null;
 	}
 
+	public CustomerResponseDto getById(Long id) {
+		return null;
+		// TODO Auto-generated method stub
+		
+	}
+
 }
