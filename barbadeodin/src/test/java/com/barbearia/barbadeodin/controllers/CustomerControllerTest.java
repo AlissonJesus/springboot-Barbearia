@@ -45,39 +45,68 @@ class CustomerControllerTest {
 	
 	@Autowired
 	private RequestSimulator simulator;
+	
+	private MockHttpServletResponse response;
 
 	@Test
 	void shouldRegisterSucessfully() throws Exception {
 		var expectedResponseBody = prepareRegisterScenarioSimulate();
-		var response = executeRegisterScenarioSimulate();
-		verifyResultScenario(response, expectedResponseBody);
+		response = executeRegisterScenarioSimulate();
+		verifyRegisterResultScenario(expectedResponseBody, HttpStatus.CREATED);
 	}
 	
 	@Test
 	void shouldFailRegisterWithInvalidBody() throws Exception {
-		var response = executeRegisterFailScenarioSimulate("{}");
-		verifyFailRegisterResultScenario(response, "Dados fornecidos inválidos");
+		response = executeRegisterFailScenarioSimulate("{}");
+		verifyFailRegisterResultScenario("Dados fornecidos inválidos", HttpStatus.BAD_REQUEST);
 	}
 	
+	@Test
+	void shouldGetByIdSucessfylly() throws Exception  {
+		var expectedResponseBody = prepareGetByIdScenarioSimulate();
+		response = executeGetByIdScenarioSimulate();
+		verifyGetByIdResultScenario(expectedResponseBody, HttpStatus.OK);
+	}
+	
+
+	private void verifyGetByIdResultScenario(String expectedResponseBody, HttpStatus status) throws UnsupportedEncodingException {
+		verifyResponse(expectedResponseBody, status);
+		verifyGetByIdMockBehavior(1);	
+	}
+
+	private void verifyGetByIdMockBehavior(int countTimes) {
+		verify(service, times(countTimes)).getById(any(Long.class));
+	}
+
+	private MockHttpServletResponse executeGetByIdScenarioSimulate() throws Exception {
+		return simulator.simulateGetRequest("/customers/{id}", 1L);
+	}
+	
+
+	private String prepareGetByIdScenarioSimulate() throws IOException {
+		when(service.getById(any(Long.class))).thenReturn(createExpectedCustomer());
+		return createJson(createExpectedCustomer(), CustomerResponseJson);
+	}
 
 	private MockHttpServletResponse executeRegisterFailScenarioSimulate(String content) throws Exception {
 		return simulator.simulatePostRequest("/customers", content);
 	}
 
-	private void verifyFailRegisterResultScenario(MockHttpServletResponse response, String expectedResponseBody) throws UnsupportedEncodingException {
-		verifyStatus(response, HttpStatus.BAD_REQUEST);	
-		verifyBody(response, expectedResponseBody);
-		
+	private void verifyFailRegisterResultScenario(String expectedResponseBody, HttpStatus status) throws UnsupportedEncodingException {
+		verifyResponse(expectedResponseBody, status);
 		verifyRegisterMockBehavior(0);	
 	}
 
-	private void verifyResultScenario(MockHttpServletResponse response, String expectedResponseBody) throws Exception {
-		verifyStatus(response, HttpStatus.CREATED);
-		verifyBody(response, expectedResponseBody);
-		
+	private void verifyRegisterResultScenario(String expectedResponseBody, HttpStatus status) throws Exception {
+		verifyResponse(expectedResponseBody, status);
 		verifyRegisterMockBehavior(1);	
 	}
 
+	private void verifyResponse(String expectedResponseBody, HttpStatus status) throws UnsupportedEncodingException {
+		verifyStatus(response, status);
+		verifyBody(response, expectedResponseBody);
+	}
+	
 	private void verifyRegisterMockBehavior(int countTimes) {
 		verify(service, times(countTimes)).register(any(CustomerRequestDto.class));
 	}
