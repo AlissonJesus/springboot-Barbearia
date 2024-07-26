@@ -26,6 +26,8 @@ import com.barbearia.barbadeodin.models.Customer;
 import com.barbearia.barbadeodin.services.CustomerService;
 import com.barbearia.barbadeodin.utils.RequestSimulator;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
@@ -68,6 +70,19 @@ class CustomerControllerTest {
 		verifyGetByIdResultScenario(expectedResponseBody, HttpStatus.OK);
 	}
 	
+	@Test
+	void shouldFailGetByIdWithInvalidId() throws Exception {
+		var expectedResponseBody = prepareFailGetByIdScenarioSimulate();
+		response = executeGetByIdScenarioSimulate();
+		verifyGetByIdResultScenario(expectedResponseBody, HttpStatus.NOT_FOUND);
+	}
+	
+
+	private String prepareFailGetByIdScenarioSimulate() {
+		var message = "Cliente não encontrado";
+		when(service.getById(any(Long.class))).thenThrow(new EntityNotFoundException(message));
+		return message;
+	}
 
 	private void verifyGetByIdResultScenario(String expectedResponseBody, HttpStatus status) throws UnsupportedEncodingException {
 		verifyResponse(expectedResponseBody, status);

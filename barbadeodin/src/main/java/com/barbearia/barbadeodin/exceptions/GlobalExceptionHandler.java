@@ -24,15 +24,14 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<?> handleError404(EntityNotFoundException ex) {
-        String errorMessage = "Serviço não encontrado";
+        String errorMessage = ex.getMessage();
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
     
     
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGlobalException() {
-        String errorMessage = "Ocorreu um erro interno";
-        
+        String errorMessage = "Ocorreu um erro interno";     
         return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
