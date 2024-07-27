@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,5 +43,12 @@ public class CustomerController {
 	public ResponseEntity<List<CustomerResponseDto>> getAll(){
 		var existingCustomers = service.getAll();
 		return ResponseEntity.ok(existingCustomers);
+	}
+	
+	@PutMapping("/{id}")
+	@Transactional
+	public ResponseEntity<CustomerResponseDto> updateById(@RequestBody @Valid CustomerRequestDto requesBodyDto, @PathVariable Long id){
+		CustomerResponseDto updatedCustomer = service.updateById(id, requesBodyDto);
+		return ResponseEntity.ok(updatedCustomer);
 	}
 }
