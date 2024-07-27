@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -28,17 +27,20 @@ class CustomerServiceTest {
 	@Mock
 	private CustomerRepository repository;
 	
+	private final CustomerRequestDto requestBody = createRequestDto();
+	private final Customer customerModel = createCustomerModel(requestBody);
+    
+    
+	
 	@Test
 	void shouldRegisterSucessfully() {
-		var requestBody = createRequestDto();
-		Customer customerModel = createCustomerModel(requestBody);
-		
-		when(repository.save(any(Customer.class))).thenReturn(customerModel);
-		
+		stubRepositorySave();
 		var result = service.register(requestBody);
-		
-		verifyRegisterResult(result, customerModel);
-		
+		verifyRegisterResult(result);	
+	}
+	
+	private void stubRepositorySave() {
+		when(repository.save(any(Customer.class))).thenReturn(customerModel);
 	}
 
 	private Object createExpectedCustomerDto(Customer customerModel) {
@@ -51,7 +53,7 @@ class CustomerServiceTest {
 		return customer;
 	}
 
-	private void verifyRegisterResult(CustomerResponseDto result, Customer customerModel) {
+	private void verifyRegisterResult(CustomerResponseDto result) {
 		var expectedCustomerDto = createExpectedCustomerDto(customerModel);
 		assertNotNull(result);
 		assertEquals(expectedCustomerDto, result);
