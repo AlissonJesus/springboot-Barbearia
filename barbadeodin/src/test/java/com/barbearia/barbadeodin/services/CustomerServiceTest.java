@@ -6,6 +6,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.barbearia.barbadeodin.dto.CustomerRequestDto;
 import com.barbearia.barbadeodin.dto.CustomerResponseDto;
+import com.barbearia.barbadeodin.exceptions.EmailAlreadyExistsException;
 import com.barbearia.barbadeodin.models.Customer;
 import com.barbearia.barbadeodin.repositories.CustomerRepository;
 
@@ -35,11 +38,51 @@ class CustomerServiceTest {
 	@Test
 	void shouldRegisterSucessfully() {
 		stubRepositorySave();
+		
 		var result = service.register(requestBody);
+		
 		verifyRegisterResult(result);	
+		verifyRegisterMockBehaviour(1);
 	}
 	
+	@Test
+	void shouldFailRegisterWithExistingEmail() {
+		stubRepositoryExistsByEmail(true);
+		
+		var exception = assertThrows(EmailAlreadyExistsException.class, () -> service.register(requestBody));
+		
+		verifyExceptionResult(exception);
+		verifyRegisterMockBehaviour(0);
+	}
+	
+	@Test
+	void shouldGetByIdSucessfylly() {
+		stubRepositoryGetById();
+		
+		var result = service.getById(1L);
+		
+		verifyRegisterResult(result);
+		verifyGetByIdMockBehaviour();
+	}
+
+	private void verifyGetByIdMockBehaviour() {
+		verify(repository, times(1)).findById(any(Long.class));
+	}
+
+	private void stubRepositoryGetById() {
+		when(repository.findById(any(Long.class))).thenReturn(Optional.of(customerModel));
+	}
+
+	private void verifyExceptionResult(EmailAlreadyExistsException exception) {
+		assertEquals("Email já cadastrado", exception.getMessage());
+	}
+
+	private void stubRepositoryExistsByEmail(boolean exists) {
+		when(repository.existsByEmail(requestBody.email())).thenReturn(exists);
+	}
+
 	private void stubRepositorySave() {
+		stubRepositoryExistsByEmail(false);
 		when(repository.save(any(Customer.class))).thenReturn(customerModel);
 	}
 
@@ -57,14 +100,13 @@ class CustomerServiceTest {
 		var expectedCustomerDto = createExpectedCustomerDto(customerModel);
 		assertNotNull(result);
 		assertEquals(expectedCustomerDto, result);
-		
-		verifyRegisterMockBehaviour(1);
 	}
 	
 	
 
-	private void verifyRegisterMockBehaviour(int countTimes) {
-		verify(repository, times(countTimes)).save(any(Customer.class));
+	private void verifyRegisterMockBehaviour(int countTimesSave) {
+		verify(repository, times(1)).existsByEmail(requestBody.email());
+		verify(repository, times(countTimesSave)).save(any(Customer.class));
 	}
 
 	private CustomerRequestDto createRequestDto() {
