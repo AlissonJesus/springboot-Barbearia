@@ -83,6 +83,16 @@ class CustomerServiceTest {
 	@Test
 	void shouldGetAllSSucessfully() {
 		stubRepositoryGetAll();
+		var result = service.getAll();
+		var firstModel = result.get(0);
+		
+		verifyRegisterResult(firstModel);
+		verifyGetAllMockBehaviour();
+	}
+
+	private void verifyGetAllMockBehaviour() {
+		verify(repository, times(1)).findAll();
+		
 	}
 
 	private void stubRepositoryGetAll() {
