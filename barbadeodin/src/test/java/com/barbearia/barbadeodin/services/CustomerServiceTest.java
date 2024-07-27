@@ -93,11 +93,27 @@ class CustomerServiceTest {
 	@Test
 	void shouldUpdateByIdSucessfully() {
 		stubRepositoryUpdateById();
+		
 		var result = service.updateById(1L, requestBody);
 	
-		
 		verifyRegisterResult(result);
 		verifyUpdateByIdMockBehaviour();
+	}
+	
+	@Test
+	void shouldFailUpdateIdWithInvalidId() {
+		stubRepositoryFailGetById();
+		
+		var exception = assertThrows(EntityNotFoundException.class, () -> service.updateById(1L, requestBody));
+		
+		verifyExceptionResult(exception, "Cliente não encontrado");
+		verifyUpdateByIdMockBehaviour();
+	}
+
+	
+	
+	private void stubRepositoryFailGetById() {
+		when(repository.getReferenceById(any(Long.class))).thenThrow(new EntityNotFoundException("Cliente não encontrado"));	
 	}
 
 	private void verifyUpdateByIdMockBehaviour() {
