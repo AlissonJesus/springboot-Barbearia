@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ class CustomerControllerTest {
 	
 	@Autowired
 	private JacksonTester<CustomerResponseDto> CustomerResponseJson;
+	
+	@Autowired
+	private JacksonTester<List<CustomerResponseDto>> CustomerListResponseJson;
 	
 	@Autowired
 	private JacksonTester<CustomerRequestDto> CustomerRequestJson;
@@ -75,8 +79,36 @@ class CustomerControllerTest {
 		var expectedResponseBody = prepareFailGetByIdScenarioSimulate();
 		response = executeGetByIdScenarioSimulate();
 		verifyGetByIdResultScenario(expectedResponseBody, HttpStatus.NOT_FOUND);
+		
 	}
 	
+	@Test
+	void shouldGetAllSucessfully() throws Exception {
+		var expectedResponseBody = prepareFailGetAllScenarioSimulate();
+		response = executeGetAllScenarioSimulate();
+		verifyGetAllResultScenario(expectedResponseBody, HttpStatus.OK);
+	}
+	
+
+	private void verifyGetAllResultScenario(String expectedResponseBody, HttpStatus status) throws UnsupportedEncodingException {
+		verifyResponse(expectedResponseBody, status);
+		verifyGetAllMockBehaviour(1);
+	}
+
+	private void verifyGetAllMockBehaviour(int countTimes) {
+		verify(service, times(countTimes)).getAll();
+	}
+
+	private MockHttpServletResponse executeGetAllScenarioSimulate() throws Exception {
+		return simulator.simulateGetRequest("/customers");
+	}
+
+	private String prepareFailGetAllScenarioSimulate() throws IOException {
+		var customer = createExpectedCustomer();
+		List<CustomerResponseDto> expectedCustomers = List.of(customer); 
+		when(service.getAll()).thenReturn(expectedCustomers);
+		return createJson(expectedCustomers, CustomerListResponseJson);
+	}
 
 	private String prepareFailGetByIdScenarioSimulate() {
 		var message = "Cliente não encontrado";
