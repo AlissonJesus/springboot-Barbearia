@@ -6,4 +6,6 @@ import com.barbearia.barbadeodin.models.Customer;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
+	boolean existsByEmail(String email);
+
 }

@@ -28,6 +28,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorMessage, HttpStatus.NOT_FOUND);
     }
     
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<?> handleError404(EmailAlreadyExistsException ex) {
+        String errorMessage = ex.getMessage();
+        return new ResponseEntity<>(errorMessage, HttpStatus.CONFLICT);
+    } 
+    
     
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGlobalException() {
