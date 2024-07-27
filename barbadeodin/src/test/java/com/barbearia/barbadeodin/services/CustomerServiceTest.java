@@ -6,6 +6,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,8 @@ import com.barbearia.barbadeodin.dto.CustomerResponseDto;
 import com.barbearia.barbadeodin.exceptions.EmailAlreadyExistsException;
 import com.barbearia.barbadeodin.models.Customer;
 import com.barbearia.barbadeodin.repositories.CustomerRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class CustomerServiceTest {
@@ -51,30 +54,51 @@ class CustomerServiceTest {
 		
 		var exception = assertThrows(EmailAlreadyExistsException.class, () -> service.register(requestBody));
 		
-		verifyExceptionResult(exception);
+		verifyExceptionResult(exception, "Email já cadastrado");
 		verifyRegisterMockBehaviour(0);
 	}
 	
 	@Test
 	void shouldGetByIdSucessfylly() {
-		stubRepositoryGetById();
+		stubRepositoryGetById(Optional.of(customerModel));
 		
 		var result = service.getById(1L);
-		
+
 		verifyRegisterResult(result);
 		verifyGetByIdMockBehaviour();
+	}
+	
+
+	@Test
+	void shouldFailGetByIdWithInvalidId() {
+		stubRepositoryGetById(Optional.empty());
+		
+		
+		var exception = assertThrows(EntityNotFoundException.class, () -> service.getById(1L));
+		verifyExceptionResult(exception, "Cliente não encontrado");
+		
+		verifyGetByIdMockBehaviour();
+	}
+	
+	@Test
+	void shouldGetAllSSucessfully() {
+		stubRepositoryGetAll();
+	}
+
+	private void stubRepositoryGetAll() {
+		when(repository.findAll()).thenReturn(List.of(customerModel));
 	}
 
 	private void verifyGetByIdMockBehaviour() {
 		verify(repository, times(1)).findById(any(Long.class));
 	}
 
-	private void stubRepositoryGetById() {
-		when(repository.findById(any(Long.class))).thenReturn(Optional.of(customerModel));
+	private void stubRepositoryGetById(Optional<Customer> optional) {
+		when(repository.findById(any(Long.class))).thenReturn(optional);
 	}
 
-	private void verifyExceptionResult(EmailAlreadyExistsException exception) {
-		assertEquals("Email já cadastrado", exception.getMessage());
+	private <T> void verifyExceptionResult(T exception, String message) {
+		assertEquals(message, ((Throwable) exception).getMessage());
 	}
 
 	private void stubRepositoryExistsByEmail(boolean exists) {
