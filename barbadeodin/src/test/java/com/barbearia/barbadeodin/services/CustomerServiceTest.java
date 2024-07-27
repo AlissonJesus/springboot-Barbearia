@@ -89,6 +89,34 @@ class CustomerServiceTest {
 		verifyRegisterResult(firstModel);
 		verifyGetAllMockBehaviour();
 	}
+	
+	@Test
+	void shouldUpdateByIdSucessfully() {
+		stubRepositoryUpdateById();
+		var result = service.updateById(1L, requestBody);
+	
+		
+		verifyRegisterResult(result);
+		verifyUpdateByIdMockBehaviour();
+	}
+
+	private void verifyUpdateByIdMockBehaviour() {
+		verify(repository, times(1)).getReferenceById(1L);
+	}
+
+	private void stubRepositoryUpdateById() {
+		Customer customerInitial = createCustomerModel("Alisson Alves","alisson@Alves.com");
+		when(repository.getReferenceById(any(Long.class))).thenReturn(customerInitial);
+	}
+
+	private Customer createCustomerModel(String name, String email) {
+		Customer customer = new Customer();
+		customer.setId(1L);
+		customer.setName(name);
+		customer.setEmail(email);
+		customer.setPhone(customerModel.getPhone());
+		return customer;
+	}
 
 	private void verifyGetAllMockBehaviour() {
 		verify(repository, times(1)).findAll();
