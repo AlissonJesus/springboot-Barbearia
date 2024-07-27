@@ -42,8 +42,9 @@ public class CustomerService {
 	}
 
 	public CustomerResponseDto updateById(Long id, CustomerRequestDto requestBody) {
-		// TODO Auto-generated method stub
-		return null;
+		Customer existingCustomer = repository.getReferenceById(id);
+		existingCustomer.updateFields(requestBody);
+		return createCustomerResponseDto(existingCustomer);
 	}
 
 	public void deleteById(Long any) {

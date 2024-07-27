@@ -11,10 +11,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity(name = "Customer")
 @Table(name = "customers")
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -35,6 +37,12 @@ public class Customer {
 	
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public void updateFields(CustomerRequestDto requestBody) {
+		name = requestBody.name();
+		phone = requestBody.phone();
+		email = requestBody.email();	
 	}
 }
 
