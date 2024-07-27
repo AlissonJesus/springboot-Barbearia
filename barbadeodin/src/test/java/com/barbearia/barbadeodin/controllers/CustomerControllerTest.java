@@ -96,8 +96,19 @@ class CustomerControllerTest {
 		verifyUpdateByIdResultScenario(expectedResponseBody, HttpStatus.OK);
 	}
 	
-	
-	
+	@Test
+	void shouldFailUpdateByIdWithInvalidId() throws Exception {
+		var expectedResponseBody = prepareFailUpdateByIdScenarioSimulate();
+		response = executeUpdateByIdcenarioSimulate();
+		verifyUpdateByIdResultScenario(expectedResponseBody, HttpStatus.NOT_FOUND);
+	}	
+
+	private String prepareFailUpdateByIdScenarioSimulate() {
+		var message = "Cliente não encontrado";
+		when(service.updateById(any(Long.class), any(CustomerRequestDto.class)))
+		.thenThrow(new EntityNotFoundException(message));
+		return message;
+	}
 
 	private void verifyUpdateByIdResultScenario(String expectedResponseBody, HttpStatus status) throws UnsupportedEncodingException {
 		verifyResponse(expectedResponseBody, status);
