@@ -35,8 +35,10 @@ public class CustomerService {
 
 
 	public List<CustomerResponseDto> getAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return repository.findAll()
+				.stream()
+				.map(CustomerResponseDto::new)
+				.toList();
 	}
 
 	public CustomerResponseDto updateById(Long id, CustomerRequestDto requestBody) {
