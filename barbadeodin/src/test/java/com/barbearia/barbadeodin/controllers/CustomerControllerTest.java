@@ -89,6 +89,36 @@ class CustomerControllerTest {
 		verifyGetAllResultScenario(expectedResponseBody, HttpStatus.OK);
 	}
 	
+	@Test
+	void shouldUpdateByIdSucessfully() throws Exception {
+		var expectedResponseBody = prepareUpdateByIdScenarioSimulate();
+		response = executeUpdateByIdcenarioSimulate();
+		verifyUpdateByIdResultScenario(expectedResponseBody, HttpStatus.OK);
+	}
+	
+
+	private void verifyUpdateByIdResultScenario(String expectedResponseBody, HttpStatus status) throws UnsupportedEncodingException {
+		verifyResponse(expectedResponseBody, status);
+		verifyUpdateByIdMockBehaviour(1);
+		
+	}
+
+	private void verifyUpdateByIdMockBehaviour(int countTimes) {
+		verify(service, times(countTimes)).updateById(any(Long.class), any(CustomerRequestDto.class));
+	}
+
+	private MockHttpServletResponse executeUpdateByIdcenarioSimulate() throws Exception {
+		var requestDto = createRequestDto();
+		var jsonContent = createJson(requestDto, CustomerRequestJson);
+		return simulator.simulatePutRequest("/customers/{id}", 1L, jsonContent);
+	}
+
+	private String prepareUpdateByIdScenarioSimulate() throws IOException {
+		var responseBody = createExpectedCustomer();
+		var expectedCustomer = createJson(responseBody, CustomerResponseJson);
+		when(service.updateById(any(Long.class), any(CustomerRequestDto.class))).thenReturn(responseBody);
+		return expectedCustomer;
+	}
 
 	private void verifyGetAllResultScenario(String expectedResponseBody, HttpStatus status) throws UnsupportedEncodingException {
 		verifyResponse(expectedResponseBody, status);

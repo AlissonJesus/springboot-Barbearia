@@ -26,4 +26,9 @@ public class CustomerService {
 		return null;
 	}
 
+	public CustomerResponseDto updateById(Long id, CustomerRequestDto requestBody) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
