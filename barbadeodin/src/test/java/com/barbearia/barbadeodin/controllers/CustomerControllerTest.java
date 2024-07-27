@@ -2,6 +2,7 @@ package com.barbearia.barbadeodin.controllers;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -102,6 +103,31 @@ class CustomerControllerTest {
 		response = executeUpdateByIdcenarioSimulate();
 		verifyUpdateByIdResultScenario(expectedResponseBody, HttpStatus.NOT_FOUND);
 	}	
+	
+	@Test
+	void shouldDeleteByIdSucessfully() throws Exception {
+		prepareDeleteByIdScenarioSimulate();
+		var response = executeDeleteByIdScenarioSimulate();
+		verifyDeleteByIdResultScenario(response, HttpStatus.NO_CONTENT);
+	}
+
+	private void verifyDeleteByIdResultScenario(MockHttpServletResponse response, HttpStatus noContent) {
+		verifyStatus(response, noContent);
+		verifyDeleteByIdMockBehaviour(1);
+	}
+
+	private void verifyDeleteByIdMockBehaviour(int countTimes) {
+		verify(service, times(countTimes)).deleteById(any(Long.class));
+	}
+
+	private void prepareDeleteByIdScenarioSimulate() {
+		doNothing().when(service).deleteById(any(Long.class));
+		
+	}
+
+	private MockHttpServletResponse executeDeleteByIdScenarioSimulate() throws Exception {
+		return simulator.simulateDeleteRequest("/customers/{id}", 1L);
+	}
 
 	private String prepareFailUpdateByIdScenarioSimulate() {
 		var message = "Cliente não encontrado";
@@ -113,7 +139,6 @@ class CustomerControllerTest {
 	private void verifyUpdateByIdResultScenario(String expectedResponseBody, HttpStatus status) throws UnsupportedEncodingException {
 		verifyResponse(expectedResponseBody, status);
 		verifyUpdateByIdMockBehaviour(1);
-		
 	}
 
 	private void verifyUpdateByIdMockBehaviour(int countTimes) {

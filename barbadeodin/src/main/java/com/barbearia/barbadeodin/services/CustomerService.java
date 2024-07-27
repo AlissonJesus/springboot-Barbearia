@@ -31,4 +31,9 @@ public class CustomerService {
 		return null;
 	}
 
+	public void deleteById(Long any) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
