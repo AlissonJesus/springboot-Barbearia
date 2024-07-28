@@ -43,6 +43,7 @@ public class CustomerService {
 
 	public CustomerResponseDto updateById(Long id, CustomerRequestDto requestBody) {
 		Customer existingCustomer = repository.getReferenceById(id);
+		checkEmailAlreadyExists(existingCustomer, requestBody);
 		existingCustomer.updateFields(requestBody);
 		return createCustomerResponseDto(existingCustomer);
 	}
@@ -56,6 +57,13 @@ public class CustomerService {
 		var existingCustomer = repository.findById(id);
 		if(existingCustomer.isEmpty())throw new EntityNotFoundException("Cliente não encontrado");
 		return existingCustomer.get();
+	}
+	
+	private void checkEmailAlreadyExists(Customer existingCustomer, CustomerRequestDto requestBody) {
+		var emailNoExists = !repository.existsByEmail(requestBody.email());	
+		if(emailNoExists) return;
+		if(existingCustomer.getEmail() == requestBody.email()) return;
+		throw new EmailAlreadyExistsException("Email já cadastrado");
 	}
 	
 	private void checkEmailAlreadyExists(CustomerRequestDto requestBody) {
