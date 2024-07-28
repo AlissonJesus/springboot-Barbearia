@@ -92,7 +92,8 @@ class CustomerServiceTest {
 	
 	@Test
 	void shouldUpdateByIdSucessfully() {
-		stubRepositoryUpdateById();
+		stubRepositoryExistsByEmail(false);
+		stubRepositoryGetReferenceById();
 		
 		var result = service.updateById(1L, requestBody);
 	
@@ -100,6 +101,11 @@ class CustomerServiceTest {
 		verifyUpdateByIdMockBehaviour();
 	}
 	
+	private void stubRepositoryGetReferenceById() {
+		Customer customerInitial = createCustomerModel("Andson Alves","alisson@Alves.com");
+		when(repository.getReferenceById(any(Long.class))).thenReturn(customerInitial);
+	}
+
 	@Test
 	void shouldFailUpdateIdWithInvalidId() {
 		stubRepositoryFailGetById();
@@ -109,9 +115,19 @@ class CustomerServiceTest {
 		verifyExceptionResult(exception, "Cliente não encontrado");
 		verifyUpdateByIdMockBehaviour();
 	}
+	
+	@Test
+	void shouldFailUpdateByIdWithExistingEmail() {
+		stubRepositoryUpdateById();
+		
+		var exception = assertThrows(EmailAlreadyExistsException.class, () -> service.updateById(1L, requestBody));
+		
+		verifyExceptionResult(exception, "Email já cadastrado");
+		verifyRegisterMockBehaviour(0);
+	}
 
-	
-	
+
+
 	private void stubRepositoryFailGetById() {
 		when(repository.getReferenceById(any(Long.class))).thenThrow(new EntityNotFoundException("Cliente não encontrado"));	
 	}
@@ -122,6 +138,7 @@ class CustomerServiceTest {
 
 	private void stubRepositoryUpdateById() {
 		Customer customerInitial = createCustomerModel("Alisson Alves","alisson@Alves.com");
+		stubRepositoryExistsByEmail(true);
 		when(repository.getReferenceById(any(Long.class))).thenReturn(customerInitial);
 	}
 
