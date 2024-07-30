@@ -2,6 +2,7 @@ package com.barbearia.barbadeodin.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -125,8 +126,21 @@ class CustomerServiceTest {
 		verifyExceptionResult(exception, "Email já cadastrado");
 		verifyRegisterMockBehaviour(0);
 	}
+	
+	@Test
+	void shouldDeleteByIdSucessfully() {
+		stubRepositoryDeleteById();
+		service.deleteById(1L);
+		verifyDeleteByIdMockBehaviour();
+	}
 
+	private void verifyDeleteByIdMockBehaviour() {
+		verify(repository, times(1)).deleteById(any(Long.class));
+	}
 
+	private void stubRepositoryDeleteById() {
+		doNothing().when(repository).deleteById(any(Long.class));
+	}
 
 	private void stubRepositoryFailGetById() {
 		when(repository.getReferenceById(any(Long.class))).thenThrow(new EntityNotFoundException("Cliente não encontrado"));	
