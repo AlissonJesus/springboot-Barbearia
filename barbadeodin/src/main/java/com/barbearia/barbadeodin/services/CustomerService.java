@@ -48,9 +48,8 @@ public class CustomerService {
 		return createCustomerResponseDto(existingCustomer);
 	}
 
-	public void deleteById(Long any) {
-		// TODO Auto-generated method stub
-		
+	public void deleteById(Long id) {
+		repository.deleteById(id);	
 	}
 	
 	private Customer getCustomer(Long id) {
