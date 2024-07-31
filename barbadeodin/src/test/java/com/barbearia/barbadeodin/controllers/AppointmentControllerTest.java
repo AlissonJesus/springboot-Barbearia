@@ -47,12 +47,9 @@ class AppointmentControllerTest {
 	private LocalDateTime date = LocalDateTime.now().plusHours(1);
 	
 	@Test
-	void shouldRegisterWithSucessfully() throws Exception {
-		var requestBodyDto = createRequestBodyDto();
+	void shouldRegisterSuccessfully() throws Exception {
 		var responseBodyDto = createResponseBodyDto();
-		var requestBody = createJson(requestBodyDto, requestBodyJson);
-		
-		when(service.register(any(AppointmentRequestDto.class))).thenReturn(responseBodyDto);
+		var requestBody = prepareRegisterSimulate(responseBodyDto);
 		
 		var expectedResponseBody = createJson(responseBodyDto, responseBodyJson);
 		var response = simulator.simulatePostRequest("/appointments", requestBody);
@@ -60,6 +57,15 @@ class AppointmentControllerTest {
 		verifyExpectedResult(response, expectedResponseBody);
 		verifyMockBehaviour();
 	}
+	
+	private String prepareRegisterSimulate(AppointmentResponseDto responseBodyDto) throws IOException {
+		var requestBodyDto = createRequestBodyDto();
+		var requestBody = createJson(requestBodyDto, requestBodyJson);
+		
+		when(service.register(any(AppointmentRequestDto.class))).thenReturn(responseBodyDto);
+		return requestBody;
+	}
+	
 
 	private AppointmentResponseDto createResponseBodyDto() {
 		return new AppointmentResponseDto(1L, 1L, 1L, date, "Notas novas");
