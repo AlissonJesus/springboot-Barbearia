@@ -32,8 +32,6 @@ public class CustomerService {
 	}
 
 
-
-
 	public List<CustomerResponseDto> getAll() {
 		return repository.findAll()
 				.stream()
