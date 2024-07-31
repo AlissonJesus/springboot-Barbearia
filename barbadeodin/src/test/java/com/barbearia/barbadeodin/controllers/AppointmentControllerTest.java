@@ -45,17 +45,22 @@ class AppointmentControllerTest {
 	private JacksonTester<AppointmentResponseDto> responseBodyJson;
 	
 	private LocalDateTime date = LocalDateTime.now().plusHours(1);
+	private MockHttpServletResponse response;
 	
 	@Test
 	void shouldRegisterSuccessfully() throws Exception {
 		var responseBodyDto = createResponseBodyDto();
 		var requestBody = prepareRegisterSimulate(responseBodyDto);
 		
-		var expectedResponseBody = createJson(responseBodyDto, responseBodyJson);
-		var response = simulator.simulatePostRequest("/appointments", requestBody);
+		var expectedResponseBody = executeRegisterSimulate(responseBodyDto, requestBody);
 		
 		verifyExpectedResult(response, expectedResponseBody);
 		verifyMockBehaviour();
+	}
+	
+	private String executeRegisterSimulate(AppointmentResponseDto responseBodyDto, String requestBody) throws Exception {
+		response = simulator.simulatePostRequest("/appointments", requestBody);
+		return createJson(responseBodyDto, responseBodyJson);
 	}
 	
 	private String prepareRegisterSimulate(AppointmentResponseDto responseBodyDto) throws IOException {
